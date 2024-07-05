@@ -8,6 +8,7 @@ export async function POST(request){
         const {name,email,password}=reqbody;
         const connectiondb= await connectdb();
         const [existinguser]=await connectiondb.execute('select * from authuser where email=?',[email]);
+        
         if(existinguser.length>0) return NextResponse({message:'User already exist'},{status:409})
         
         const salt= await bcrypt.genSalt(10);

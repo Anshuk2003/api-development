@@ -13,7 +13,7 @@ export async function DELETE(request) {
         const connectiondb=await connectdb();
         const [result] = await connectiondb.execute('DELETE FROM users WHERE id = ?', [userId]);
         if (result.affectedRows === 0) {
-            return NextResponse.json({ error: 'User does not exist or No changes made' }, { status: 404 });
+            return NextResponse.json({ error: 'User does not exist' }, { status: 404 });
         }
         return NextResponse.json({
             message:"User deleted successfully",

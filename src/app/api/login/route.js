@@ -22,7 +22,7 @@ export async function POST(request) {
 
         //create token
         const dataToBeSigned = {
-            email: existinguser.email,
+            email: existinguser[0].email,
         }
 
         const token = jwt.sign(dataToBeSigned, process.env.JWT_SECRETE, {
