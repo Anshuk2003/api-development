@@ -44,7 +44,7 @@ export async function POST(request) {
     } catch (error) {
         console.log(error)
         return NextResponse.json(
-            { message: 'Check your credential' },
+            { message: 'Server down try after some time' },
             { status: 500 }
         )
     }
