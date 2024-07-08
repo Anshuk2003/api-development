@@ -1,8 +1,16 @@
 import connectdb from "../../../../config/dbconfig";
 import { NextRequest,NextResponse } from "next/server";
+import {validateJWT} from "../../../../helpers/validatejwt"
 
 export async function PATCH(request) {
     try {
+        const jwtResponse = await validateJWT(request);
+        if (jwtResponse.status === 404) {
+            return jwtResponse;
+        }
+        if (!jwtResponse || jwtResponse.status === 500) {
+            return NextResponse.json({error :'Unauthorized Invalid Token' }, { status: 401 });
+        }
         const { searchParams } = new URL(request.url);
         const searchid= searchParams.get('id');
         
@@ -11,7 +19,8 @@ export async function PATCH(request) {
         if (isNaN(userId)) {
             return NextResponse.json({ error: 'User ID is needed' }, { status: 400 });
         }
-        const {id,name,email}= await request.json();
+        const {name,email,city,country}= await request.json();
+
         const updates = [];
 
         if (name) {
@@ -19,6 +28,12 @@ export async function PATCH(request) {
         }
         if (email) {
             updates.push({ field: 'email', value:email });
+        }
+        if (city) {
+            updates.push({ field: 'city', value: city });
+        }
+        if (country) {
+            updates.push({ field: 'country', value:country });
         }
 
         if (updates.length === 0) {
@@ -33,6 +48,11 @@ export async function PATCH(request) {
         if(user.length===0) {
             return NextResponse({message:'User does not exist'},{status:404})
         }
+
+        if (user[0].email !== jwtResponse) {
+            return NextResponse.json({ message: 'Unauthorized to update user' }, { status: 401 });
+        }
+
         const [result]=await connectiondb.execute(`UPDATE users SET ${updateFields} WHERE id = ?`,updateValues);
         if(result.affectedrows===0){
             return NextResponse.json({ error: 'No changes made' }, { status: 404 });
@@ -40,7 +60,9 @@ export async function PATCH(request) {
         const updatedUser = {
             id: userId,
             name: name || user[0].name,
-            email: email || user[0].email
+            email: email || user[0].email,
+            city: city || user[0].city,
+            country: country || user[0].country
         };
         
         return NextResponse.json({

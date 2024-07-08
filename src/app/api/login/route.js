@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs/dist/bcrypt";
 import connectdb from "../../../../config/dbconfig";
 import { NextRequest,NextResponse } from "next/server";
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
 
 export async function POST(request) {
     try {

@@ -11,7 +11,8 @@ export async function DELETE(request) {
         }
         const userId = parseInt(searchid, 10);
         const connectiondb=await connectdb();
-        const [result] = await connectiondb.execute('DELETE FROM users WHERE id = ?', [userId]);
+        const [useremail]=await connectiondb.execute('select email from users where id=?',[userId])
+        const [result] = await connectiondb.execute('DELETE FROM authuser WHERE email = ?', [useremail[0].email]);
         if (result.affectedRows === 0) {
             return NextResponse.json({ error: 'User does not exist' }, { status: 404 });
         }
