@@ -1,3 +1,60 @@
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticates a user and returns a JWT token if the credentials are valid.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: "john.doe@example.com"
+ *               password:
+ *                 type: string
+ *                 example: "securePassword123"
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Login successful"
+ *                 token:
+ *                   type: string
+ *                   example: "jwt.token.here"
+ *       404:
+ *         description: User does not exist
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "User does not exist!"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Server down try after some time"
+ */
+
+
 import bcrypt from "bcryptjs/dist/bcrypt";
 import connectdb from "../../../../config/dbconfig";
 import { NextRequest,NextResponse } from "next/server";
@@ -6,7 +63,7 @@ import jwt from 'jsonwebtoken';
 export async function POST(request) {
     try {
         const reqbody=await request.json();
-        console.log(reqbody)
+        // console.log(reqbody)
         const {email,password}=reqbody;
         const connectiondb= await connectdb();
         const [existinguser]=await connectiondb.execute('select * from authuser where email=?',[email]);
@@ -20,7 +77,6 @@ export async function POST(request) {
             throw Error("Check your Credentials");
         }
 
-        //create token
         const dataToBeSigned = {
             email: existinguser[0].email,
         }
