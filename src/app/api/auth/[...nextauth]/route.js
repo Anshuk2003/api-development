@@ -1,7 +1,6 @@
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google";
 import connectdb from "../../../../../config/dbconfig";
-import { Session } from "inspector";
 
 export const authOptions = {
   // Configure one or more authentication providers
